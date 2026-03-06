@@ -10,6 +10,7 @@
     
     {% if user.is_authenticated %}
     <p>{{ user.username }} さんでログイン中</p>
+    <p><a href="/attendance/punch/">今日の打刻ページへ</a></p>
     <!-- <p><a href="/accounts/logout/">ログアウト</a></p> -->
     <form method="post" action="/accounts/logout/">
       {% csrf_token %}
