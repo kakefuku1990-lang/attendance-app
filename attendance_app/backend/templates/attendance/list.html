@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <title>打刻一覧</title>
+</head>
+<body>
+
+<h1>自分の打刻一覧</h1>
+
+<table border="1">
+    <tr>
+        <th>日付</th>
+        <th>出勤</th>
+        <th>退勤</th>
+    </tr>
+
+    {% for record in records %}
+    <tr>
+        <td>{{ record.date }}</td>
+        <td>{{ record.clock_in|default:"-" }}</td>
+        <td>{{ record.clock_out|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+
+<a href="/attendance/punch/">打刻ページ</a>
+<br>
+<a href="/">トップへ</a>
+
+</body>
+</html>
