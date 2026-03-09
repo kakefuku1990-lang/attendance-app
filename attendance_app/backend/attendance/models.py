@@ -57,3 +57,65 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} profile"
 
+
+# 申請テーブル
+class AttendanceCorrectionRequest(models.Model):
+
+    STATUS_CHOICES = [
+        ("pending", "申請中"),
+        ("approved", "承認"),
+        ("rejected", "却下"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    date = models.DateField()
+
+    requested_clock_in = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    requested_clock_out = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    reason = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+        return f"{self.user} {self.date} 修正申請"
+
+
+    def save(self, *args, **kwargs):
+
+        super().save(*args, **kwargs)
+
+        if self.status == "approved":
+
+            record, created = AttendanceRecord.objects.get_or_create(
+                user=self.user,
+                date=self.date
+            )
+
+            if self.requested_clock_in:
+                record.clock_in = self.requested_clock_in
+
+            if self.requested_clock_out:
+                record.clock_out = self.requested_clock_out
+
+            record.save()

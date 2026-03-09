@@ -1,10 +1,8 @@
-from django.contrib import admin
-
 # Register your models here.
 from django.contrib import admin
 from .models import AttendanceRecord
-
 from .models import Profile, Department
+from .models import AttendanceCorrectionRequest
 
 # 打刻履歴モデルの管理画面
 @admin.register(AttendanceRecord)
@@ -35,3 +33,18 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Department, DepartmentAdmin)
+
+
+# 申請機能設定
+@admin.register(AttendanceCorrectionRequest)
+class AttendanceCorrectionRequestAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "id",
+        "user",
+        "date",
+        "status",
+        "created_at",
+    )
+
+    list_filter = ("status", "date")
