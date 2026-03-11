@@ -1,0 +1,21 @@
+<h2>休暇申請一覧</h2>
+
+<table border="1">
+
+<tr>
+<th>日付</th>
+<th>理由</th>
+<th>ステータス</th>
+</tr>
+
+{% for leave in leave_requests %}
+
+<tr>
+<td>{{ leave.date }}</td>
+<td>{{ leave.reason }}</td>
+<td>{{ leave.get_status_display }}</td>
+</tr>
+
+{% endfor %}
+
+</table>

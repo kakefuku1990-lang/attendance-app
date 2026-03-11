@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import AttendanceRecord
 from .models import Profile, Department
 from .models import AttendanceCorrectionRequest
+from .models import LeaveRequest
 
 # 打刻履歴モデルの管理画面
 @admin.register(AttendanceRecord)
@@ -48,3 +49,18 @@ class AttendanceCorrectionRequestAdmin(admin.ModelAdmin):
     )
 
     list_filter = ("status", "date")
+
+# 休暇申請設定
+@admin.register(LeaveRequest)
+class LeaveRequestAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "user",
+        "date",
+        "status",
+        "created_at",
+    )
+
+    list_filter = (
+        "status",
+    )

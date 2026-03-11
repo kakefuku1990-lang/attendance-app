@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 User = get_user_model()
@@ -119,3 +120,42 @@ class AttendanceCorrectionRequest(models.Model):
                 record.clock_out = self.requested_clock_out
 
             record.save()
+
+
+# 休暇申請テーブル
+class LeaveRequest(models.Model):
+
+    STATUS_CHOICES = [
+        ("pending", "申請中"),
+        ("approved", "承認"),
+        ("rejected", "却下"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    date = models.DateField()
+
+    reason = models.TextField(blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "date"],
+                name="unique_user_leave_date"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} {self.date} 休暇申請"
+

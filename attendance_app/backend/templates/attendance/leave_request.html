@@ -1,0 +1,12 @@
+<h2>休暇申請</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        申請する
+    </button>
+
+</form>
