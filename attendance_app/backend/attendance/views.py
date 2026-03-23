@@ -228,20 +228,46 @@ def overtime_request_create(request):
     )
 
 # 残業申請一覧ビュ
+# @login_required
+# def overtime_request_list(request):
+
+#     requests = OvertimeRequest.objects.filter(
+#         user=request.user
+#     ).order_by("-date")
+
+#     return render(
+#         request,
+#         "attendance/overtime_request_list.html",
+#         {"requests": requests}
+#     )
+
 @login_required
 def overtime_request_list(request):
 
-    requests = OvertimeRequest.objects.filter(
-        user=request.user
-    ).order_by("-date")
+    user = request.user
+
+    # 上長の場合：部下 + 自分
+    if user.role == "manager":
+        requests = OvertimeRequest.objects.filter(
+            user__profile__manager=user
+        ) | OvertimeRequest.objects.filter(user=user)
+
+    # 管理者：全件
+    elif user.role == "admin":
+        requests = OvertimeRequest.objects.all()
+
+    # 一般社員：自分のみ
+    else:
+        requests = OvertimeRequest.objects.filter(user=user)
+
+    requests = requests.order_by("-date")
 
     return render(
         request,
         "attendance/overtime_request_list.html",
         {"requests": requests}
     )
-
-
+    
 # 上長承認リスト表示処理
 @login_required
 def leave_approval_list(request):
