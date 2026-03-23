@@ -1,0 +1,41 @@
+<h2>今日の勤怠</h2>
+{% if messages %}
+<ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>
+出勤:
+{% if record and record.clock_in %}
+{{ record.clock_in|date:"H:i" }}
+{% else %}
+-
+{% endif %}
+</p>
+
+<p>
+退勤:
+{% if record and record.clock_out %}
+{{ record.clock_out|date:"H:i" }}
+{% else %}
+-
+{% endif %}
+</p>
+<!-- 出勤ボタン -->
+{% if not record or not record.clock_in %}
+<form method="post" action="{% url 'attendance:punch_in' %}">
+    {% csrf_token %}
+    <button type="submit">出勤</button>
+</form>
+{% endif %}
+
+<!-- 退勤ボタン -->
+{% if record and record.clock_in and not record.clock_out %}
+<form method="post" action="{% url 'attendance:punch_out' %}">
+    {% csrf_token %}
+    <button type="submit">退勤</button>
+</form>
+{% endif %}

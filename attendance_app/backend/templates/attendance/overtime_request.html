@@ -1,0 +1,11 @@
+<h2>残業申請</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        申請
+    </button>
+</form>

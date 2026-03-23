@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "attendance",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -129,6 +130,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# カスタムUSER設定定義
+AUTH_USER_MODEL = "accounts.User"
 
 # 認証ログイン設定追加 20260304
 LOGIN_REDIRECT_URL = "/"

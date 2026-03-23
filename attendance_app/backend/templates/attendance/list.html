@@ -12,6 +12,7 @@
         <th>日付</th>
         <th>出勤</th>
         <th>退勤</th>
+        <th>残業</th>
     </tr>
 
     {% for record in records %}
@@ -19,6 +20,11 @@
         <td>{{ record.date }}</td>
         <td>{{ record.clock_in|default:"-" }}</td>
         <td>{{ record.clock_out|default:"-" }}</td>
+        <td>
+            {% if d.record %}
+            {{ d.record.overtime_duration }}
+            {% endif %}
+            </td>
     </tr>
     {% endfor %}
 

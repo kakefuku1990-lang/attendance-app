@@ -21,6 +21,7 @@ class PunchServiceTest(TestCase):
         record = PunchService.punch_in(self.user)
 
         self.assertIsNotNone(record.clock_in)
+        self.assertEqual(record.user, self.user)
 
     def test_punch_in_duplicate(self):
         PunchService.punch_in(self.user)

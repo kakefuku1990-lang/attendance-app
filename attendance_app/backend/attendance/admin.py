@@ -4,6 +4,7 @@ from .models import AttendanceRecord
 from .models import Profile, Department
 from .models import AttendanceCorrectionRequest
 from .models import LeaveRequest
+from .models import OvertimeRequest
 
 # 打刻履歴モデルの管理画面
 @admin.register(AttendanceRecord)
@@ -64,3 +65,16 @@ class LeaveRequestAdmin(admin.ModelAdmin):
     list_filter = (
         "status",
     )
+
+# 残業申請設定
+@admin.register(OvertimeRequest)
+class OvertimeRequestAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "user",
+        "date",
+        "hours",
+        "status",
+    )
+
+    list_filter = ("status",)

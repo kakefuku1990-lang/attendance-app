@@ -1,0 +1,47 @@
+<h2>休暇申請 承認一覧</h2>
+
+<table border="1">
+
+<tr>
+<th>社員</th>
+<th>日付</th>
+<th>理由</th>
+<th>操作</th>
+</tr>
+
+{% for req in requests %}
+
+<tr>
+<td>{{ req.user }}</td>
+<td>{{ req.date }}</td>
+<td>{{ req.reason }}</td>
+
+<td>
+
+<!-- リンクを踏んだだけで処理が走ってしまう -->
+<!-- <a href="{% url 'attendance:leave_approve' req.id %}">
+承認 -->
+<!-- </a> -->
+
+<!-- <a href="{% url 'attendance:leave_reject' req.id %}"> -->
+<!-- 却下 -->
+<!-- </a> -->
+
+  <form method="post"
+        action="{% url 'attendance:leave_update_status' req.id 'approved' %}">
+      {% csrf_token %}
+      <button type="submit">承認</button>
+  </form>
+
+  <form method="post"
+        action="{% url 'attendance:leave_update_status' req.id 'rejected' %}">
+      {% csrf_token %}
+      <button type="submit">却下</button>
+  </form>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>

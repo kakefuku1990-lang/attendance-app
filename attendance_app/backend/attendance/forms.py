@@ -1,5 +1,6 @@
 from django import forms
 from .models import LeaveRequest
+from .models import OvertimeRequest
 
 # 休暇申請フォーム
 class LeaveRequestForm(forms.ModelForm):
@@ -29,5 +30,13 @@ class LeaveRequestForm(forms.ModelForm):
                 raise forms.ValidationError(
                     "この日はすでに休暇申請しています"
                 )
-                
+
         return cleaned_data
+
+
+# 残業申請フォーム
+class OvertimeRequestForm(forms.ModelForm):
+
+    class Meta:
+        model = OvertimeRequest
+        fields = ["date", "hours", "reason"]

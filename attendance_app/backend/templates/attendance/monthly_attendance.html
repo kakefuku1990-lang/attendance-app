@@ -1,0 +1,66 @@
+<a href="?year={{ year }}&month={{ month|add:'-1' }}">前月</a>
+
+{{ year }}年 {{ month }}月
+
+<a href="?year={{ year }}&month={{ month|add:'1' }}">次月</a>
+
+<table border="1">
+
+  <tr>
+  <th>日付</th>
+  <th>出勤</th>
+  <th>退勤</th>
+  <th>実働</th>
+  <th>残業</th>
+  <th>状態</th>
+  </tr>
+  
+  {% for d in days %}
+  
+  <tr>
+
+    <td>{{ d.date }}</td>
+    
+    <td>
+    {% if d.record and d.record.clock_in %}
+    {{ d.record.clock_in|date:"H:i" }}
+    {% endif %}
+    </td>
+    
+    <td>
+    {% if d.record and d.record.clock_out %}
+    {{ d.record.clock_out|date:"H:i" }}
+    {% endif %}
+    </td>
+    
+    <td>
+    {% if d.record %}
+    {{ d.record.work_duration }}
+    {% endif %}
+    </td>
+
+    <td>
+      {% if d.record %}
+      {{ d.record.overtime_duration }}
+      {% endif %}
+    </td>
+
+    <td>
+    
+    {% if d.leave %}
+    休暇
+    {% elif d.record %}
+    出勤
+    {% else %}
+    -
+    {% endif %}
+    
+    </td>
+
+  </tr>
+
+  {% endfor %}
+  
+  </table>
+
+<p>総勤務時間: {{ total_work }}</p>
