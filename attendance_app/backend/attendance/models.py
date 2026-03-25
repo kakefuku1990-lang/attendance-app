@@ -5,7 +5,6 @@ from django.conf import settings
 from datetime import datetime, time, timedelta
 from django.utils import timezone
 
-
 User = get_user_model()
 
 # 打刻履歴モデル
@@ -68,12 +67,6 @@ class Department(models.Model):
 # 社員情報モデル
 class Profile(models.Model):
 
-    # user = models.OneToOneField(
-    #     User,
-    #     on_delete=models.CASCADE,
-    #     related_name="profile"
-    # )
-    # カスタムUSER対応
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

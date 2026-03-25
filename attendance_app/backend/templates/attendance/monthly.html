@@ -1,0 +1,22 @@
+<h2>月次レポート</h2>
+
+<p>年: {{ year }} / 月: {{ month }}</p>
+
+<p>総勤務時間: {{ total_work }}</p>
+<p>総残業時間: {{ total_overtime }}</p>
+
+<table border="1">
+    <tr>
+        <th>日付</th>
+        <th>勤務時間</th>
+        <th>残業時間</th>
+    </tr>
+
+    {% for d in days %}
+    <tr>
+        <td>{{ d.date }}</td>
+        <td>{{ d.work }}</td>
+        <td>{{ d.overtime }}</td>
+    </tr>
+    {% endfor %}
+</table>

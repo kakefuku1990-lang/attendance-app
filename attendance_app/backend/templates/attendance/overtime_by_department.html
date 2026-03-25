@@ -1,0 +1,19 @@
+<h2>部署別 残業申請一覧</h2>
+
+<table border="1">
+    <tr>
+        <th>ユーザー</th>
+        <th>日付</th>
+        <th>時間</th>
+        <th>ステータス</th>
+    </tr>
+
+    {% for req in requests %}
+    <tr>
+        <td>{{ req.user }}</td>
+        <td>{{ req.date }}</td>
+        <td>{{ req.hours }}</td>
+        <td>{{ req.status }}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -201,6 +201,26 @@ def overtime_request_list(request):
         {"requests": requests}
     )
 
+# 部署単位で残業申請を取得
+@login_required
+def overtime_by_department(request):
+
+    user = request.user
+
+    # 自分の部署取得
+    department = user.profile.department
+
+    # 部署のユーザーの申請を取得
+    requests = OvertimeRequest.objects.filter(
+        user__profile__department=department
+    ).order_by("-date")
+
+    return render(
+        request,
+        "attendance/overtime_by_department.html",
+        {"requests": requests}
+    )
+
 # 上長承認リスト表示処理
 @login_required
 def leave_approval_list(request):
@@ -273,6 +293,23 @@ def monthly_attendance(request):
     )
 
     return render(request, "attendance/monthly.html", data)
+
+
+# 月間レポート処理
+@login_required
+def monthly_report(request):
+
+    data = AttendanceService.get_monthly_attendance(
+        user=request.user,
+        year=request.GET.get("year"),
+        month=request.GET.get("month"),
+    )
+
+    return render(
+        request,
+        "attendance/monthly_report.html",
+        data
+    )
 
 # # 勤怠一覧表示処理
 # @login_required
