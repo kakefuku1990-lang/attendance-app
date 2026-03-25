@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (punch_view, attendance_list, leave_request_create, leave_request_list, overtime_request_create, overtime_request_list, 
-leave_approval_list, leave_update_status, monthly_attendance, today_attendance, punch_in_view, punch_out_view)
+leave_approval_list, leave_update_status, monthly_attendance, today_attendance, punch_in_view, punch_out_view, approve_overtime, reject_overtime)
 
 app_name = "attendance"
 
@@ -21,4 +21,6 @@ urlpatterns = [
     # path("punch/out/", punch_out, name="punch_out"),
     path("punch/in/", punch_in_view, name="punch_in"),
     path("punch/out/", punch_out_view, name="punch_out"),
+    path("overtime/<int:pk>/approve/", approve_overtime, name="approve_overtime"),
+    path("overtime/<int:pk>/reject/", reject_overtime, name="reject_overtime")
 ]

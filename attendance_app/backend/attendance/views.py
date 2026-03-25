@@ -19,6 +19,8 @@ from datetime import timedelta
 from django.contrib import messages
 from attendance.services.punch_service import PunchService
 from attendance.services.attendance_service import AttendanceService
+from attendance.services.overtime_service import OvertimeService
+
 
 # 当日打刻画面
 @login_required
@@ -69,63 +71,6 @@ def punch_out_view(request):
 
     return redirect("today")
 
-# # 出勤ボタン処理
-# @login_required
-# def punch_in(request):
-
-#     if request.method != "POST":
-#         return redirect("/")
-
-#     today = timezone.now().date()
-
-#     record, created = AttendanceRecord.objects.get_or_create(
-#         user=request.user,
-#         date=today
-#     )
-
-#     if record.clock_in:
-#         messages.warning(request, "すでに出勤済です")
-#         return redirect("attendance:today_attendance")
-
-#     record.clock_in = timezone.now()
-#     record.save()
-
-#     messages.success(request, "出勤しました")
-
-#     return redirect("attendance:today_attendance")
-
-# # 退勤ボタン処理
-# @login_required
-# def punch_out(request):
-
-#     if request.method != "POST":
-#         return redirect("/")
-
-#     today = timezone.now().date()
-
-#     try:
-#         record = AttendanceRecord.objects.get(
-#             user=request.user,
-#             date=today
-#         )
-
-#         if not record.clock_in:
-#             messages.error(request, "出勤していません")
-#             return redirect("attendance:today_attendance")
-
-#         if record.clock_out:
-#             messages.warning(request, "すでに退勤済です")
-#             return redirect("attendance:today_attendance")
-
-#         record.clock_out = timezone.now()
-#         record.save()
-
-#         messages.success(request, "退勤しました")
-
-#     except AttendanceRecord.DoesNotExist:
-#         messages.error(request, "出勤していません")
-
-#     return redirect("attendance:today_attendance")
 
 # 今日の勤怠表示ビュー処理
 @login_required
@@ -187,7 +132,7 @@ def leave_request_create(request):
     )
 
 
-# 申請履歴表示処理
+# 休日申請履歴表示処理
 @login_required
 def leave_request_list(request):
 
@@ -227,20 +172,8 @@ def overtime_request_create(request):
         {"form": form}
     )
 
+
 # 残業申請一覧ビュ
-# @login_required
-# def overtime_request_list(request):
-
-#     requests = OvertimeRequest.objects.filter(
-#         user=request.user
-#     ).order_by("-date")
-
-#     return render(
-#         request,
-#         "attendance/overtime_request_list.html",
-#         {"requests": requests}
-#     )
-
 @login_required
 def overtime_request_list(request):
 
@@ -267,7 +200,7 @@ def overtime_request_list(request):
         "attendance/overtime_request_list.html",
         {"requests": requests}
     )
-    
+
 # 上長承認リスト表示処理
 @login_required
 def leave_approval_list(request):
@@ -285,51 +218,29 @@ def leave_approval_list(request):
         {"requests": requests}
     )
 
+# 残業承認処理（承認）
+@login_required
+def approve_overtime(request, pk):
+    try:
+        OvertimeService.approve(request.user, pk)
+        messages.success(request, "承認しました")
+    except ValueError as e:
+        messages.error(request, str(e))
 
-# 承認ビュー
-# @login_required
-# def leave_approve(request, pk):
+    return redirect("attendance:overtime_request_list")
 
-#     if request.method != "POST":
-#         return redirect("/")
+# 残業承認処理（却下）
+@login_required
+def reject_overtime(request, pk):
+    try:
+        OvertimeService.reject(request.user, pk)
+        messages.success(request, "却下しました")
+    except ValueError as e:
+        messages.error(request, str(e))
 
-#     # leave = LeaveRequest.objects.get(
-#     #     id=pk,
-#     #     user__profile__manager=request.user
-#     # )
-#     leave = get_object_or_404(
-#     LeaveRequest,
-#     id=pk,
-#     user__profile__manager=request.user
-#     )
+    return redirect("attendance:overtime_request_list")
 
-#     # leave.status = "approved"
-#     # leave.save()
-#     with transaction.atomic():
-
-#         leave.status = "approved"
-#         leave.save()
-
-#     return redirect("attendance:leave_approval_list")
-
-# # 却下ビュー
-# @login_required
-# def leave_reject(request, pk):
-
-#     if request.method != "POST":
-#         return redirect("/")
-
-#     leave = LeaveRequest.objects.get(
-#         id=pk,
-#         user__profile__manager=request.user
-#     )
-
-#     leave.status = "rejected"
-#     leave.save()
-
-#     return redirect("attendance:leave_approval_list")
-
-# 承認・却下ビュー
+# 休日承認・却下ビュー
 @login_required
 def leave_update_status(request, pk, status):
 

@@ -1,23 +1,40 @@
 <h2>残業申請一覧</h2>
 
 <table border="1">
+    <tr>
+        <th>ユーザー</th>
+        <th>日付</th>
+        <th>時間</th>
+        <th>ステータス</th>
+        <th>操作</th>
+    </tr>
 
-<tr>
-<th>日付</th>
-<th>時間</th>
-<th>理由</th>
-<th>ステータス</th>
-</tr>
+    {% for req in requests %}
+    <tr>
+        <td>{{ req.user }}</td>
+        <td>{{ req.date }}</td>
+        <td>{{ req.hours }}</td>
+        <td>{{ req.status }}</td>
 
-{% for req in requests %}
-
-<tr>
-<td>{{ req.date }}</td>
-<td>{{ req.hours }}</td>
-<td>{{ req.reason }}</td>
-<td>{{ req.get_status_display }}</td>
-</tr>
-
-{% endfor %}
-
+        <td>
+          {% if user.role == "manager" or user.role == "admin" %}
+              {% if req.status == "pending" %}
+                  <a href="{% url 'attendance:approve_overtime' req.id %}">承認</a>
+                  |
+                  <a href="{% url 'attendance:reject_overtime' req.id %}">却下</a>
+              {% endif %}
+          {% endif %}
+      </td>   
+    </tr>
+    {% endfor %}
 </table>
+
+<td>
+  {% if user.role == "manager" or user.role == "admin" %}
+      {% if req.status == "pending" %}
+          <a href="{% url 'attendance:approve_overtime' req.id %}">承認</a>
+          |
+          <a href="{% url 'attendance:reject_overtime' req.id %}">却下</a>
+      {% endif %}
+  {% endif %}
+</td>
