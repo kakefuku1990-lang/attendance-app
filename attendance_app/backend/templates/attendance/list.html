@@ -10,31 +10,43 @@
 <table border="1">
     <tr>
         <th>日付</th>
+        <th>ステータス</th>
         <th>出勤</th>
         <th>退勤</th>
         <th>残業</th>
     </tr>
 
-    {% for record in records %}
+    {% for d in days %}
     <tr>
-        <td>{{ record.date }}</td>
-        <td>{{ record.clock_in|default:"-" }}</td>
-        <td>{{ record.clock_out|default:"-" }}</td>
+        <td>{{ d.date }}</td>
+    
         <td>
             {% if d.record %}
-            {{ d.record.overtime_duration }}
+                <span style="color: green;">出勤</span>
+            {% elif d.leave %}
+                <span style="color: blue;">休暇</span>
+            {% else %}
+                <span style="color: gray;">-</span>
             {% endif %}
-            </td>
+        </td>
+    
+        <td>{{ d.record.clock_in|default:"-" }}</td>
+        <td>{{ d.record.clock_out|default:"-" }}</td>
+    
+        <td>
+            {% if d.record %}
+                {{ d.record.overtime_duration }}
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
-
 </table>
 
 <br>
 
-<a href="/attendance/punch/">打刻ページ</a>
+<a href="{% url 'attendance:today' %}">打刻ページへ</a>
 <br>
-<a href="/">トップへ</a>
+<a href="/">トップへ戻る</a>
 
 </body>
 </html>

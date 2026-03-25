@@ -26,6 +26,7 @@
 </p>
 <!-- 出勤ボタン -->
 {% if not record or not record.clock_in %}
+<!-- <form method="post" action="{% url 'attendance:punch_in' %}"> -->
 <form method="post" action="{% url 'attendance:punch_in' %}">
     {% csrf_token %}
     <button type="submit">出勤</button>
@@ -34,8 +35,11 @@
 
 <!-- 退勤ボタン -->
 {% if record and record.clock_in and not record.clock_out %}
+<!-- <form method="post" action="{% url 'attendance:punch_out' %}"> -->
 <form method="post" action="{% url 'attendance:punch_out' %}">
     {% csrf_token %}
     <button type="submit">退勤</button>
 </form>
 {% endif %}
+
+<p><a href="/">トップへ戻る</a></p>

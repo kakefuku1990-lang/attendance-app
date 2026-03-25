@@ -1,4 +1,7 @@
 <h2>月次レポート</h2>
+<a href="{% url 'attendance:export_monthly_csv' %}">
+    CSVダウンロード
+</a>
 
 <p>年: {{ year }} / 月: {{ month }}</p>
 
@@ -20,3 +23,5 @@
     </tr>
     {% endfor %}
 </table>
+
+<a href="/">トップへ戻る</a>

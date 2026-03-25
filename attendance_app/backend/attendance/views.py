@@ -20,33 +20,11 @@ from django.contrib import messages
 from attendance.services.punch_service import PunchService
 from attendance.services.attendance_service import AttendanceService
 from attendance.services.overtime_service import OvertimeService
+import csv
+from django.http import HttpResponse
+import logging
 
-
-# 当日打刻画面
-@login_required
-def punch_view(request):
-    today = date.today()
-
-    record, created = AttendanceRecord.objects.get_or_create(
-        user=request.user,
-        date=today,
-    )
-
-    if request.method == "POST":
-        action = request.POST.get("action")
-
-        if action == "clock_in" and record.clock_in is None:
-            record.clock_in = timezone.now()
-            record.save()
-
-        elif action == "clock_out" and record.clock_out is None:
-            record.clock_out = timezone.now()
-            record.save()
-
-        return redirect("punch")
-
-    return render(request, "attendance/punch.html", {"record": record})
-
+logger = logging.getLogger(__name__)
 
 # 出勤ビュー呼び出し処理
 @login_required
@@ -57,7 +35,7 @@ def punch_in_view(request):
     except ValueError as e:
         messages.error(request, str(e))
 
-    return redirect("today")
+    return redirect("attendance:today")
 
 
 # 退勤ビュー呼び出し処理
@@ -69,7 +47,7 @@ def punch_out_view(request):
     except ValueError as e:
         messages.error(request, str(e))
 
-    return redirect("today")
+    return redirect("attendance:today")
 
 
 # 今日の勤怠表示ビュー処理
@@ -90,16 +68,63 @@ def today_attendance(request):
     )
 
 # 勤怠一覧画面
+# @login_required
+# def attendance_list(request):
+#     records = AttendanceRecord.objects.filter(
+#         user=request.user
+#     ).order_by("-date")
+
+#     return render(
+#         request,
+#         "attendance/list.html",
+#         {"records": records}
+#     )
+
 @login_required
 def attendance_list(request):
+
+    today = timezone.now().date()
+
+    year = int(request.GET.get("year", today.year))
+    month = int(request.GET.get("month", today.month))
+
+    _, last_day = calendar.monthrange(year, month)
+
+    # 勤怠
     records = AttendanceRecord.objects.filter(
-        user=request.user
-    ).order_by("-date")
+        user=request.user,
+        date__year=year,
+        date__month=month
+    )
+
+    record_map = {r.date.day: r for r in records}
+
+    # 休暇
+    leaves = LeaveRequest.objects.filter(
+        user=request.user,
+        date__year=year,
+        date__month=month
+    )
+
+    leave_map = {l.date.day: l for l in leaves}
+
+    days = []
+
+    for day in range(1, last_day + 1):
+
+        record = record_map.get(day)
+        leave = leave_map.get(day)
+
+        days.append({
+            "date": date(year, month, day),
+            "record": record,
+            "leave": leave
+        })
 
     return render(
         request,
         "attendance/list.html",
-        {"records": records}
+        {"days": days}
     )
 
 # 休暇申請処理
@@ -241,6 +266,8 @@ def leave_approval_list(request):
 # 残業承認処理（承認）
 @login_required
 def approve_overtime(request, pk):
+    logger.info(f"approve called by {request.user}")
+
     try:
         OvertimeService.approve(request.user, pk)
         messages.success(request, "承認しました")
@@ -310,6 +337,40 @@ def monthly_report(request):
         "attendance/monthly_report.html",
         data
     )
+
+
+# CSV出力処理
+@login_required
+def export_monthly_csv(request):
+
+    data = AttendanceService.get_monthly_attendance(
+        user=request.user,
+        year=request.GET.get("year"),
+        month=request.GET.get("month"),
+    )
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="monthly_report.csv"'
+
+    writer = csv.writer(response)
+
+    # ヘッダー
+    writer.writerow(["日付", "勤務時間", "残業時間"])
+
+    # データ
+    for d in data["days"]:
+        writer.writerow([
+            d["date"],
+            d["work"],
+            d["overtime"],
+        ])
+
+    return response
+
+
+
+
+
 
 # # 勤怠一覧表示処理
 # @login_required

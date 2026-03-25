@@ -10,16 +10,21 @@
     
     {% if user.is_authenticated %}
     <p>{{ user.username }} さんでログイン中</p>
-    <p><a href="/attendance/punch/">今日の打刻ページへ</a></p>
-    <p><a href="/attendance/list/">打刻履歴を見る</a></p>
-    <!-- <p><a href="/accounts/logout/">ログアウト</a></p> -->
-    <form method="post" action="/accounts/logout/">
+    <p><a href="{% url 'attendance:today' %}">今日の打刻ページへ</a></p>
+    <p><a href="{% url 'attendance:attendance_list' %}">打刻履歴を見る</a></p>
+    <p><a href="{% url 'attendance:overtime_request_list' %}">残業申請一覧</a></p>
+
+    <p><a href="{% url 'attendance:overtime_request_create' %}">残業申請する</a></p>
+    <p><a href="{% url 'attendance:leave_request_list' %}">休暇申請一覧</a></p>
+
+    <p><a href="{% url 'attendance:leave_request_create' %}">休暇申請する</a></p>
+    <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button type="submit">ログアウト</button>
     </form>
   {% else %}
     <p>未ログイン</p>
-    <p><a href="/accounts/login/">ログイン</a></p>
+    <p><a href="{% url 'login' %}">ログイン</a></p>
   {% endif %}
   </body>
 </html>

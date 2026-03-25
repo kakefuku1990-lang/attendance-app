@@ -34,6 +34,9 @@ class AttendanceService:
 
         record_map = {r.date.day: r for r in records}
         leave_map = {l.date.day: l for l in leaves}
+        # デバッグ用
+        print("===== record_map =====")
+        print(record_map)
 
         days = []
         total_work = timedelta()
@@ -43,6 +46,8 @@ class AttendanceService:
 
             record = record_map.get(day)
             leave = leave_map.get(day)
+            # デバッグ用
+            print(f"day={day}, record={record}") 
 
             work = record.work_duration() if record else timedelta()
             overtime = record.overtime_duration() if record else timedelta()
