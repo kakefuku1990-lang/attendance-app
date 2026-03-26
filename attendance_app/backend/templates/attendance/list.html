@@ -30,8 +30,21 @@
             {% endif %}
         </td>
     
-        <td>{{ d.record.clock_in|default:"-" }}</td>
-        <td>{{ d.record.clock_out|default:"-" }}</td>
+        <td>
+            {% if d.record.clock_in %}
+                {{ d.record.clock_in|date:"H:i" }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        
+        <td>
+            {% if d.record.clock_out %}
+                {{ d.record.clock_out|date:"H:i" }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
     
         <td>
             {% if d.record %}

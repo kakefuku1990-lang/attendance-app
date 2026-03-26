@@ -25,17 +25,25 @@ class AttendanceRecord(models.Model):
                 name="unique_user_date"
             )
         ]
+
+
     # 休憩計算ロジック
     def work_duration(self):
-
         if not self.clock_in or not self.clock_out:
             return None
 
         work = self.clock_out - self.clock_in
-
         break_time = timedelta(minutes=self.break_minutes)
 
-        return work - break_time
+        result = work - break_time
+
+        # 👇追加（重要）
+        if result.total_seconds() < 0:
+            return timedelta()
+
+        return result
+
+
 
     # 残業時間自動算出メソッド
     def overtime_duration(self):

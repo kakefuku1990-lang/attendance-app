@@ -18,6 +18,7 @@
     <p><a href="{% url 'attendance:leave_request_list' %}">休暇申請一覧</a></p>
 
     <p><a href="{% url 'attendance:leave_request_create' %}">休暇申請する</a></p>
+    <p><a href="{% url 'attendance:monthly_report' %}">月間レポートを表示</a></p>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button type="submit">ログアウト</button>
